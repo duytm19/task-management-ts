@@ -1,8 +1,11 @@
-const taskRoutes = require("./task.route")
-const userRoutes = require('./user.route')
-const authMiddleware = require("../middlewares/auth.middleware")
-module.exports = (app) => {
-    app.use("/api/v1/tasks",authMiddleware.requireAuth,taskRoutes)
+import {taskRoutes} from "./task.route"
+import { Express } from "express"
+const mainV1Routes = (app:Express):void => {
 
-    app.use("/api/v1/users",userRoutes)
+    const version: String = "/api/v1"
+    
+    app.use(version+ "/tasks",taskRoutes)
+
 }
+
+export default mainV1Routes
