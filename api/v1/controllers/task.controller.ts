@@ -1,3 +1,5 @@
+import paginationHelper from "../../../helpers/pagination";
+import searchHelper from "../../../helpers/search";
 import Task from "../models/task.model";
 import { Request, Response } from "express";
 
@@ -5,8 +7,9 @@ import { Request, Response } from "express";
 export const index = async (req: Request, res: Response) => {
   // find
   interface Find {
-    deleted: boolean;
-    status?: string;
+    deleted: boolean,
+    status?: string,
+    title?: RegExp
   }
   const find: Find = {
     deleted: false,
@@ -16,13 +19,25 @@ export const index = async (req: Request, res: Response) => {
     find.status = req.query.status.toString()
   }
   // end status
+  //Search
+    const objectSearch = searchHelper(req.query);
+    if (objectSearch.regex) {
+      find.title = objectSearch.regex;
+    }
 
+    //End Search
   // sort
   const sort = {}
   if(req.query.sortKey && req.query.sortValue){
     sort[req.query.sortKey.toString()]=req.query.sortValue
   }
   // end sort
+  let initPagination={
+    currentPage:1,
+    limitItems:2,
+  }
+  const countTasks =await Task.countDocuments(find);
+  const objectPagination = paginationHelper(initPagination,req.query,countTasks)
   const tasks = await Task.find(find).sort(sort);
   res.json(tasks);
 };
@@ -44,27 +59,27 @@ export const detail = async (req, res) => {
 
 // // [PATCH] /api/v1/tasks/change-status/:id
 
-// module.exports.changeStatus =async (req,res)=>{
-//   try{
-//     const id=req.params.id
-//     const status = req.body.status
+export const changeStatus =async (req:Request,res:Response)=>{
+  try{
+    const id: string=req.params.id
+    const status: string = req.body.status
 
-//     await Task.updateOne({
-//       _id:id
-//     },{
-//       status: status
-//     })
-//     res.json({
-//       code:200,
-//       message:"Change status successfully"
-//     })
-//   }catch(error){
-//     res.json({
-//       code:400,
-//       message:error
-//     })
-//   }
-// }
+    await Task.updateOne({
+      _id:id
+    },{
+      status: status
+    })
+    res.json({
+      code:200,
+      message:"Change status successfully"
+    })
+  }catch(error){
+    res.json({
+      code:400,
+      message:error
+    })
+  }
+}
 // // [PATCH] /api/v1/tasks/change-multi
 // module.exports.changeMulti = async (req,res)=>{
 //   try{
