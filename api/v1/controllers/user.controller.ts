@@ -158,18 +158,13 @@ export const login = async(req:Request,res:Response)=>{
 //         message:"Reset password successfully"
 //     })
 // }
-// [GET] /api/v1/users/detail/:id
+// [GET] /api/v1/users
 export const detail = async (req:Request,res:Response) =>{
-    const id:string = req.params.id
 
-    const user = User.findOne({
-        _id:id,
-        deleted:false
-    }).select("-password -tokenUser")
     res.json({
         code:200,
         message:"Successfully",
-        info:user
+        info:req["user"]
     })
 }
 // // [GET] /api/v1/users/list
