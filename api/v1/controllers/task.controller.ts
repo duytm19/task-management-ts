@@ -1,14 +1,21 @@
-import Task from "../models/task.model"
-import { Request, Response} from 'express'
+import Task from "../models/task.model";
+import { Request, Response } from "express";
 
 //[GET] /api/v1/tasks
 export const index = async (req: Request, res: Response) => {
-    const find={
-        deleted:false
-    }
-    const tasks = await Task.find(find)
-    res.json(tasks)
+  interface Find {
+    deleted: boolean;
+    status?: string;
+  }
+  const find: Find = {
+    deleted: false,
   };
+  if(req.query.status){
+    find.status = req.query.status.toString()
+  }
+  const tasks = await Task.find(find);
+  res.json(tasks);
+};
 
 //[GET] /api/v1/tasks/detail/:id
 export const detail = async (req, res) => {
@@ -65,7 +72,7 @@ export const detail = async (req, res) => {
 //           message:"Change multi status successfully!"
 //         })
 //         break
-      
+
 //       case "delete":
 //         await Task.updateMany({
 //           _id:{$in:ids}
