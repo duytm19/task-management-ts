@@ -13,7 +13,7 @@ router.patch("/change-multi",controller.changeMulti)
 
 router.post("/create",controller.create)
 
-// router.patch("/edit/:id",controller.edit)
+router.patch("/edit/:id",controller.edit)
 
 // router.delete("/delete/:id",controller.delete)
 export const taskRoutes : Router= router
