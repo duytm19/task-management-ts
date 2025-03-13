@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 
 //[GET] /api/v1/tasks
 export const index = async (req: Request, res: Response) => {
+  // find
   interface Find {
     deleted: boolean;
     status?: string;
@@ -10,10 +11,19 @@ export const index = async (req: Request, res: Response) => {
   const find: Find = {
     deleted: false,
   };
+  // status
   if(req.query.status){
     find.status = req.query.status.toString()
   }
-  const tasks = await Task.find(find);
+  // end status
+
+  // sort
+  const sort = {}
+  if(req.query.sortKey && req.query.sortValue){
+    sort[req.query.sortKey.toString()]=req.query.sortValue
+  }
+  // end sort
+  const tasks = await Task.find(find).sort(sort);
   res.json(tasks);
 };
 
